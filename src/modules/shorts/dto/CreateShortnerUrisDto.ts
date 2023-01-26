@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUrl } from 'class-validator';
-import { ShortnerUrisBuilder } from '../shortner-uris.builder';
-import { ShortnerUris } from '../entities/shortner-uris.entity';
 
 export class CreateShortnerUrisDto {
   @IsUrl({}, { message: 'url inválida' })
@@ -11,8 +9,4 @@ export class CreateShortnerUrisDto {
     required: true,
   })
   url: string;
-
-  toEntity(): ShortnerUris {
-    return new ShortnerUrisBuilder().withUrl(this.url).build();
-  }
 }
