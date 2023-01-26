@@ -4,49 +4,76 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ShortnerUrisRepository } from './shortner-uris.repository';
+// import { ShortnerUrisRepository } from './shortner-uris.repository';
 import { CreateShortnerUrisDto } from './dto/CreateShortnerUrisDto';
 import { ShortnerUrisDto } from './dto/ShortnerUrisDto';
+import { customAlphabet } from 'nanoid';
+import { ShortnerUris } from './entities/shortner-uris.entity';
 
 @Injectable()
 export class ShortnerUrisService {
   private MINIMAL_SHORT_URI_SIZE = 5;
+  private COUNT_DAYS = 1;
+  private URI_BUILDER;
+  private PROTOCOL = 'https';
 
   constructor(
-    @InjectRepository(ShortnerUrisRepository)
-    private readonly shortnerUrisRepository: ShortnerUrisRepository,
-  ) {}
+    // Repository pattern foi depreciando na nova versão do TypeORM
+    // @InjectRepository(ShortnerUrisRepository)
+    @InjectRepository(ShortnerUris)
+    private readonly repo: Repository<ShortnerUris>,
+  ) {
+    this.URI_BUILDER = customAlphabet(
+      '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      10,
+    );
+  }
 
   async createShortUri(
     createShortnerUris: CreateShortnerUrisDto,
-  ): Promise<ShortnerUrisDto> {
-    const shortnerUris = createShortnerUris.toEntity();
-    await shortnerUris.initialize();
+  ): Promise<any> {
+    // create an empty entity
+    const shortnerUri = this.repo.create();
 
-    if (shortnerUris.shortUri.length < this.MINIMAL_SHORT_URI_SIZE) {
+    shortnerUri.url = createShortnerUris.url;
+    shortnerUri.shortUri = await this.URI_BUILDER();
+    shortnerUri.expiration = new Date(Date.now() + this.COUNT_DAYS);
+
+    if (shortnerUri.shortUri.length < this.MINIMAL_SHORT_URI_SIZE) {
       throw new InternalServerErrorException(
         'Não foi possível gerar a url curta',
       );
     }
 
-    await this.shortnerUrisRepository.save(shortnerUris);
-
-    return shortnerUris.toDtoWithNewUrl();
+    return await this.repo.save(shortnerUri);
   }
 
-  async getOriginalUri(shortUri: any): Promise<ShortnerUrisDto> {
-    const shortnerUris = await this.shortnerUrisRepository.findOneBy(shortUri);
+  async findOne(options: Partial<{ id: number, shortUri: string }>): Promise<ShortnerUris> {
+    return await this.repo.findOneBy({
+      // id: options.id,
+      shortUri: options.shortUri,
+    });
+  }
 
-    if (!shortnerUris) {
+  async getOriginalUri(shortUri: string): Promise<string> {
+    const shortnerUri = await this.repo.findOneBy({ shortUri: shortUri });
+
+    if (!shortnerUri) {
       throw new NotFoundException('Não foi possível encontrar a url informada');
     }
 
     const currentDate = new Date();
-    if (currentDate > shortnerUris.expiration) {
+    if (currentDate > shortnerUri.expiration) {
       throw new BadRequestException('A url solicitada expirou');
     }
 
-    return shortnerUris.toDtoWithUrl();
+    const url = shortnerUri.url;
+    if (!url.startsWith('http') || !url.startsWith('https')) {
+      return `${this.PROTOCOL}://${url}`;
+    }
+
+    return url;
   }
 }
