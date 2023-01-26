@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Post, Response } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ShortnerUrisService } from './shortner-uris.service';
 import * as express from 'express';
-import { CreateShortnerUrisDto } from './dto/Create-Shortner-Uris.Dto';
-import { ShortnerUrisDto } from './dto/Shortner-Uris.Dto';
+import { CreateShortnerUrisDto } from './dto/CreateShortnerUrisDto';
+import { ShortnerUrisDto } from './dto/ShortnerUrisDto';
 
 @Controller()
 @ApiTags('Encurtar URL')

@@ -1,4 +1,4 @@
-import { ShortnerUris } from './shortner-uris.entity';
+import { ShortnerUris } from './entities/shortner-uris.entity';
 
 export class ShortnerUrisBuilder {
   private readonly _shortnerUris: ShortnerUris;

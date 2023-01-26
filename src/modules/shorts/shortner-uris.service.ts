@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShortnerUrisRepository } from './shortner-uris.repository';
-import { CreateShortnerUrisDto } from './dto/Create-Shortner-Uris.Dto';
-import { ShortnerUrisDto } from './dto/Shortner-Uris.Dto';
+import { CreateShortnerUrisDto } from './dto/CreateShortnerUrisDto';
+import { ShortnerUrisDto } from './dto/ShortnerUrisDto';
 
 @Injectable()
 export class ShortnerUrisService {

@@ -1,8 +1,8 @@
 import { customAlphabet } from 'nanoid/async';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import * as config from 'config';
-import { ShortnerUrisDto } from './dto/Shortner-Uris.Dto';
-import { ShortnerUrisDtoBuilder } from './dto/Shortner-Uris-Dto.Builder';
+import { ShortnerUrisDto } from '../dto/ShortnerUrisDto';
+import { ShortnerUrisDtoBuilder } from '../dto/ShortnerUrisDtoBuilder';
 
 const serverConfig = config.get('server');
 const nanoid = customAlphabet(

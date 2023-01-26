@@ -1,4 +1,4 @@
-import { ShortnerUrisDto } from './Shortner-Uris.Dto';
+import { ShortnerUrisDto } from './ShortnerUrisDto';
 
 export class ShortnerUrisDtoBuilder {
   private readonly _shortnerUrisDto: ShortnerUrisDto;

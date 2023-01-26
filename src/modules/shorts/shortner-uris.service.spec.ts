@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { ShortnerUrisRepository } from './shortner-uris.repository';
 import { ShortnerUrisService } from './shortner-uris.service';
-import { CreateShortnerUrisDtoBuilder } from './dto/Create-Shortner-Uris-Dto.Builder';
+import { CreateShortnerUrisDtoBuilder } from './dto/CreateShortnerUrisDtoBuilder';
 
 const mockShortnerUrisRepository = () => ({
   save: jest.fn(),
